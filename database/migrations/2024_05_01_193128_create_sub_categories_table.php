@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignId('category_id')
                   ->constrained()
                   ->onDelete('cascade'); // Set cascade on delete
+            $table->string('image')->nullable(); // Add image column and make it nullable
             $table->timestamps();
         });
     }

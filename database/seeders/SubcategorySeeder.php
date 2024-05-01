@@ -16,12 +16,13 @@ class SubcategorySeeder extends Seeder
     {
         $faker = Faker::create();
 
-        foreach (range(1, 20) as $index) { // Generate 20 fake subcategories
+        foreach (range(1, 10) as $index) { // Generate 20 fake subcategories
             SubCategories::create([
                 'name' => $faker->word,
                 'sku' => $faker->unique()->slug(2), // Generate a unique SKU
-                'category_id' => rand(1, 10), // Assuming you have 10 categories
+                'category_id' => rand(1, 5), // Assuming you have 10 categories
                 'status' => $faker->boolean(70) ? 1 : 0, // 70% chance of being active (status = 1)
+                'image' => NULL
             ]);
         }
     }

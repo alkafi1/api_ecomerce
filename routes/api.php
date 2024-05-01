@@ -20,9 +20,9 @@ Route::middleware('auth:sanctum')->group(function () {
     //category route
     Route::prefix('category')->group(function () {
         Route::get('/', [CategoryController::class, 'index']);
-        Route::post('/create', [CategoryController::class, 'store']);
+        Route::post('/', [CategoryController::class, 'store']);
         Route::get('/{id}', [CategoryController::class, 'show']);
-        Route::put('/{id}', [CategoryController::class, 'update']);
+        Route::post('/{id}', [CategoryController::class, 'update']);
         Route::delete('/{id}', [CategoryController::class, 'destroy']);
         Route::get('/datatable', [CategoryController::class, 'dataForDataTable']);
     });
@@ -32,7 +32,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/', [SubCategoryController::class, 'index'])->name('subcategories.index');
         Route::post('/', [SubCategoryController::class, 'store'])->name('subcategories.store');
         Route::get('/{id}', [SubCategoryController::class, 'show'])->name('subcategories.show');
-        Route::put('/{id}', [SubcategoryController::class, 'update'])->name('subcategories.update');
+        Route::post('/{id}', [SubcategoryController::class, 'update'])->name('subcategories.update');
         Route::delete('/{id}', [SubcategoryController::class, 'destroy'])->name('subcategories.destroy');
     });
 });

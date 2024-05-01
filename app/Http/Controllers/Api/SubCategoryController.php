@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Models\SubCategories;
 use Illuminate\Http\Request;
@@ -34,22 +35,36 @@ class SubCategoryController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|unique:sub_categories',
             'category_id' => 'required|exists:categories,id',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         if ($validator->fails()) {
             throw ValidationException::withMessages($validator->errors()->toArray());
         }
 
+        $data = $validator->validated();
+
+        // Check if image is present in the request
+        if ($request->hasFile('image')) {
+            // Get the uploaded file
+            $newimage = $request->file('image');
+            $imageName = Helper::imageUpload($newimage, 'images/subcategory');
+
+            // Add image name to data array
+            $data['image'] = $imageName;
+        }
         // Generate SKU from the name
-        $sku = Str::snake($request->input('name'));
+        $sku = strtolower(str_replace(' ', '-', $request->input('name')));
+        
 
         // Create the SubCategory
         $subCategory = SubCategories::create([
-            'name' => $request->input('name'),
+            'name' => $data['name'],
             'sku' => $sku,
+            'image' => $data['image'] ?? null,
             'category_id' => $request->input('category_id'),
         ]);
-
+        $subCategory->load('category');
         return response()->json([
             'status' => true,
             'message' => 'SubCategory created successfully.',
@@ -95,6 +110,7 @@ class SubCategoryController extends Controller
                 Rule::unique('sub_categories')->ignore($id),
             ],
             'category_id' => 'required|exists:categories,id',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         if ($validator->fails()) {
@@ -105,16 +121,24 @@ class SubCategoryController extends Controller
             ], 422);
         }
 
-        // Generate SKU from the updated name
-        $sku = Str::snake($request->input('name'));
+        $data = $validator->validated();
+
+        // Check if image is present in the request
+        if ($request->hasFile('image')) {
+            // Get the uploaded file
+            $newimage = $request->file('image');
+            $imageName = Helper::ImageUploadAndDelete($newimage, $subCategory->image, 'images/subcategory');
+
+            // Add image name to data array
+            $data['image'] = $imageName;
+        }
+
+        // Generate SKU from the category name (e.g., remove spaces and convert to lowercase)
+        $sku = strtolower(str_replace(' ', '-', $request->input('name')));
 
         // Update the SubCategory attributes
-        $subCategory->update([
-            'name' => $request->input('name'),
-            'sku' => $sku,
-            'category_id' => $request->input('category_id'),
-        ]);
-
+        $subCategory->update(array_merge($data, ['sku' => $sku]));
+        $subCategory->load('category');
         return response()->json([
             'status' => true,
             'message' => 'SubCategory updated successfully.',

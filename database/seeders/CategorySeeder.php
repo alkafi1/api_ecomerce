@@ -22,11 +22,11 @@ class CategorySeeder extends Seeder
         $categories = [];
 
         // Generate 10 categories using Faker
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 5; $i++) {
             $categories[] = [
                 'name' => $faker->word, // Generate a random word for category name
                 'sku' => 'cat-' . ($i + 1), // Generate SKU based on category index
-                'image' => $faker->imageUrl() // Generate a random image URL
+                'image' => NULL // Generate a random image URL
             ];
         }
 
