@@ -13,7 +13,7 @@ class CategoryController extends Controller
     public function index(Request $request)
     {
         // Get all categories with pagination
-        $categories = Category::where('status', 1)->paginate(10);
+        return $categories = Category::where('status', 1)->paginate(10);
 
         return view('categories.index', ['categories' => $categories]);
     }
